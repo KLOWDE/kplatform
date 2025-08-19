@@ -1,130 +1,481 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CreditCard, Database } from 'lucide-react';
-import { Terminal } from './terminal';
+'use client';
 
-export default function HomePage() {
+import { useEffect } from 'react';
+
+export default function KlowdeLandingPage() {
+  useEffect(() => {
+    // Initialize the interactive elements after component mounts
+    const initPage = () => {
+      let currentStep = 1;
+      const storySteps = document.querySelectorAll('.story-step');
+      const progressBar = document.getElementById('progressBar');
+      const cube = document.querySelector('.nav-cube');
+      const brain = document.querySelector('.brain-emoji');
+      
+      // Update scroll progress
+      const updateProgress = () => {
+        const scrollTop = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+        if (progressBar) {
+          progressBar.style.height = scrollPercent + '%';
+        }
+      };
+
+      // Update scroll progress tracking
+      const updateScrollProgress = () => {
+        const scrollTop = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        
+        // Calculate which step should be active based on scroll position
+        storySteps.forEach((step, index) => {
+          const rect = step.getBoundingClientRect();
+          const viewportCenter = windowHeight / 2;
+          
+          if (Math.abs(rect.top + rect.height / 2 - viewportCenter) < 150) {
+            const newFlowStep = index + 1;
+            if (newFlowStep !== currentStep) {
+              currentStep = newFlowStep;
+              updateStepActivation();
+            }
+          }
+        });
+      };
+
+      // Update step activation
+      const updateStepActivation = () => {
+        storySteps.forEach((step, index) => {
+          if (index + 1 === currentStep) {
+            step.classList.add('active');
+          } else {
+            step.classList.remove('active');
+          }
+        });
+      };
+
+      // Trigger cube spark
+      const triggerCubeSpark = () => {
+        if (cube) {
+          cube.style.animation = 'none';
+          setTimeout(() => {
+            cube.style.animation = 'gentleRotate 12s linear infinite';
+          }, 200);
+        }
+      };
+
+      // Trigger brain spark
+      const triggerBrainSpark = () => {
+        if (brain) {
+          brain.style.animation = 'none';
+          setTimeout(() => {
+            brain.style.animation = 'gentleFloat 4s ease-in-out infinite';
+          }, 200);
+        }
+      };
+
+      // Create shooting stars
+      const createShootingStars = () => {
+        setInterval(() => {
+          if (Math.random() > 0.7) {
+            createShootingStar();
+          }
+        }, 2000);
+      };
+
+      const createShootingStar = () => {
+        const star = document.createElement('div');
+        star.className = 'shooting-star';
+        
+        // Random starting position
+        const startY = Math.random() * window.innerHeight;
+        star.style.top = startY + 'px';
+        star.style.left = '-100px';
+        
+        document.body.appendChild(star);
+        
+        // Remove star after animation
+        setTimeout(() => {
+          if (star.parentNode) {
+            star.parentNode.removeChild(star);
+          }
+        }, 3000);
+      };
+
+      // Add event listeners
+      if (cube) {
+        cube.addEventListener('click', triggerCubeSpark);
+      }
+      if (brain) {
+        brain.addEventListener('click', triggerBrainSpark);
+      }
+
+      // Initialize
+      updateProgress();
+      createShootingStars();
+
+      // Add scroll event listener
+      window.addEventListener('scroll', () => {
+        updateScrollProgress();
+        updateProgress();
+      });
+    };
+
+    // Small delay to ensure DOM is ready
+    setTimeout(initPage, 100);
+  }, []);
+
   return (
-    <main>
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-            <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
-              <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
-              </h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
-                ready-to-use template. Packed with modern technologies and
-                essential integrations.
-              </p>
-              <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                <a
-                  href="https://vercel.com/templates/next.js/next-js-saas-starter"
-                  target="_blank"
-                >
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="text-lg rounded-full"
-                  >
-                    Deploy your own
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </a>
-              </div>
-            </div>
-            <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              <Terminal />
-            </div>
+    <div className="klowde-landing-page">
+      <style jsx global>{`
+        :root {
+          --primary-color: #6366f1;
+          --secondary-color: #8b5cf6;
+          --accent-color: #06b6d4;
+          --background: #0f0f23;
+          --surface: #1a1a2e;
+          --text: #e2e8f0;
+          --glow: #6366f1;
+        }
+
+        .klowde-landing-page {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+          background: var(--background);
+          color: var(--text);
+          overflow-x: hidden;
+          min-height: 100vh;
+          position: relative;
+        }
+
+        .klowde-landing-page * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        /* Single Brain Emoji */
+        .brain-emoji {
+          position: fixed;
+          top: 30px;
+          right: 40px;
+          font-size: 2.5rem;
+          z-index: 1000;
+          animation: gentleFloat 4s ease-in-out infinite;
+          filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4));
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .brain-emoji:hover {
+          transform: scale(1.1);
+          filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.6));
+        }
+
+        @keyframes gentleFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+
+        /* Header */
+        .header {
+          text-align: center;
+          padding: 80px 20px 60px;
+          position: relative;
+          z-index: 10;
+        }
+
+        .header h1 {
+          font-size: 4rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 20px;
+          animation: titleGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+          0%, 100% { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3)); }
+          50% { filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.5)); }
+        }
+
+        /* Core Cube Section */
+        .core-cube-section {
+          text-align: center;
+          padding: 60px 20px;
+          position: relative;
+          z-index: 10;
+        }
+
+        /* Simple 3D Cube */
+        .nav-3d {
+          perspective: 1000px;
+          display: inline-block;
+          margin: 40px 0;
+          position: relative;
+        }
+
+        .nav-cube {
+          width: 150px;
+          height: 150px;
+          position: relative;
+          transform-style: preserve-3d;
+          animation: gentleRotate 12s linear infinite;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .nav-cube:hover {
+          animation-play-state: paused;
+          transform: scale(1.05);
+        }
+
+        @keyframes gentleRotate {
+          from { transform: rotateX(0deg) rotateY(0deg); }
+          to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .nav-face {
+          position: absolute;
+          width: 150px;
+          height: 150px;
+          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          border: 2px solid var(--accent-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2.5rem;
+          color: white;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        }
+
+        .nav-face:hover {
+          background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+          box-shadow: 0 0 20px var(--glow);
+        }
+
+        .nav-face.front { transform: rotateY(0deg) translateZ(75px); }
+        .nav-face.back { transform: rotateY(180deg) translateZ(75px); }
+        .nav-face.right { transform: rotateY(90deg) translateZ(75px); }
+        .nav-face.left { transform: rotateY(-90deg) translateZ(75px); }
+        .nav-face.top { transform: rotateX(90deg) translateZ(75px); }
+        .nav-face.bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+        /* Story Flow */
+        .story-flow {
+          max-width: 800px;
+          margin: 80px auto;
+          padding: 0 20px;
+          position: relative;
+          z-index: 10;
+        }
+
+        .story-step {
+          display: flex;
+          align-items: center;
+          margin-bottom: 80px;
+          padding: 30px;
+          border-radius: 20px;
+          background: rgba(26, 26, 46, 0.4);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(99, 102, 241, 0.1);
+          transition: all 0.6s ease;
+          position: relative;
+          opacity: 0.6;
+          transform: translateY(20px);
+        }
+
+        .story-step.active {
+          opacity: 1;
+          transform: translateY(0);
+          background: rgba(99, 102, 241, 0.1);
+          border-color: var(--glow);
+          box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .story-icon {
+          font-size: 3.5rem;
+          margin-right: 40px;
+          transition: all 0.5s ease;
+          filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
+        }
+
+        .story-step.active .story-icon {
+          transform: scale(1.2);
+          filter: drop-shadow(0 0 20px var(--glow));
+        }
+
+        .story-word {
+          font-size: 1.8rem;
+          font-weight: 600;
+          color: var(--text);
+          opacity: 0.8;
+          transition: all 0.5s ease;
+        }
+
+        .story-step.active .story-word {
+          opacity: 1;
+          color: var(--accent-color);
+          text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Shooting Star */
+        .shooting-star {
+          position: fixed;
+          width: 2px;
+          height: 2px;
+          background: white;
+          border-radius: 50%;
+          box-shadow: 0 0 4px white, 0 0 8px white, 0 0 12px var(--accent-color);
+          z-index: 999;
+          pointer-events: none;
+          animation: shootingStar 3s linear infinite;
+        }
+
+        @keyframes shootingStar {
+          0% {
+            transform: translateX(-100px) translateY(100px) rotate(45deg);
+            opacity: 1;
+          }
+          70% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(calc(100vw + 100px)) translateY(-100px) rotate(45deg);
+            opacity: 0;
+          }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+          position: fixed;
+          left: 40px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 6px;
+          height: 200px;
+          background: rgba(99, 102, 241, 0.1);
+          border-radius: 3px;
+          z-index: 1000;
+        }
+
+        .progress-bar {
+          width: 100%;
+          background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+          border-radius: 3px;
+          transition: height 0.4s ease;
+          position: relative;
+        }
+
+        /* Footer */
+        .footer {
+          text-align: center;
+          padding: 80px 20px 60px;
+          margin-top: 100px;
+          position: relative;
+          z-index: 10;
+        }
+
+        .footer a {
+          color: var(--accent-color);
+          text-decoration: none;
+          font-size: 1.3rem;
+          padding: 18px 36px;
+          border: 2px solid var(--accent-color);
+          border-radius: 30px;
+          transition: all 0.3s ease;
+          display: inline-block;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .footer a:hover {
+          background: var(--accent-color);
+          color: var(--background);
+          box-shadow: 0 0 25px var(--accent-color);
+          transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .header h1 { font-size: 3rem; }
+          .nav-cube { width: 120px; height: 120px; }
+          .nav-face { width: 120px; height: 120px; font-size: 2rem; }
+          .story-icon { font-size: 3rem; margin-right: 30px; }
+          .brain-emoji { right: 30px; font-size: 2rem; }
+          .progress-container { left: 30px; }
+        }
+      `}</style>
+
+      {/* Single Brain Emoji */}
+      <div className="brain-emoji">🧠</div>
+
+      {/* Header */}
+      <header className="header">
+        <h1>klowde</h1>
+      </header>
+
+      {/* Core Cube Section */}
+      <section className="core-cube-section">
+        <div className="nav-3d">
+          <div className="nav-cube">
+            <div className="nav-face front">🤖</div>
+            <div className="nav-face back">🔮</div>
+            <div className="nav-face right">⚡</div>
+            <div className="nav-face left">🌟</div>
+            <div className="nav-face top">🚀</div>
+            <div className="nav-face bottom">💫</div>
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-white w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-            <div>
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <svg viewBox="0 0 24 24" className="h-6 w-6">
-                  <path
-                    fill="currentColor"
-                    d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"
-                  />
-                </svg>
-              </div>
-              <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Next.js and React
-                </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal
-                  performance and developer experience.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <Database className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Drizzle ORM
-                </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient
-                  data management and scalability.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <CreditCard className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Stripe Integration
-                </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with
-                  industry-leading Stripe integration.
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* Story Flow */}
+      <div className="story-flow">
+        <div className="story-step" data-step="1">
+          <div className="story-icon">🌱</div>
+          <div className="story-word">Seed</div>
         </div>
-      </section>
-
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
-              </h2>
-              <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
-                and running quickly. Don't waste time on boilerplate - focus on
-                what makes your product unique.
-              </p>
-            </div>
-            <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a href="https://github.com/nextjs/saas-starter" target="_blank">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-lg rounded-full"
-                >
-                  View the code
-                  <ArrowRight className="ml-3 h-6 w-6" />
-                </Button>
-              </a>
-            </div>
-          </div>
+        
+        <div className="story-step" data-step="2">
+          <div className="story-icon">🌿</div>
+          <div className="story-word">Grow</div>
         </div>
-      </section>
-    </main>
+        
+        <div className="story-step" data-step="3">
+          <div className="story-icon">🌸</div>
+          <div className="story-word">Bloom</div>
+        </div>
+        
+        <div className="story-step" data-step="4">
+          <div className="story-icon">🌊</div>
+          <div className="story-word">Flow</div>
+        </div>
+        
+        <div className="story-step" data-step="5">
+          <div className="story-icon">✨</div>
+          <div className="story-word">Spark</div>
+        </div>
+        
+        <div className="story-step" data-step="6">
+          <div className="story-icon">🚀</div>
+          <div className="story-word">Launch</div>
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="progress-container">
+        <div className="progress-bar" id="progressBar"></div>
+      </div>
+
+      {/* Footer */}
+      <footer className="footer">
+        <a href="https://indexclub.co.uk" target="_blank" rel="noopener noreferrer">Visit Index Club</a>
+      </footer>
+    </div>
   );
 }
