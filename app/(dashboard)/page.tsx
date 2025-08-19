@@ -8,9 +8,9 @@ export default function KlowdeLandingPage() {
     const initPage = () => {
       let currentStep = 1;
       const storySteps = document.querySelectorAll('.story-step');
-      const progressBar = document.getElementById('progressBar');
-      const cube = document.querySelector('.nav-cube');
-      const brain = document.querySelector('.brain-emoji');
+      const progressBar = document.getElementById('progressBar') as HTMLElement;
+      const cube = document.querySelector('.nav-cube') as HTMLElement;
+      const brain = document.querySelector('.brain-emoji') as HTMLElement;
       
       // Update scroll progress
       const updateProgress = () => {
